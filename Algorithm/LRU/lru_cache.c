@@ -15,7 +15,7 @@
  * 它同时作为双向链表节点和哈希表冲突链的节点。
  */
 typedef struct Node {
-    int key;
+    char* key;
     int value;
     struct Node* prev;  // 双向链表 (LRU 顺序)
     struct Node* next;  // 双向链表 (LRU 顺序)
@@ -39,20 +39,26 @@ struct LRUCache {
 // --- 内部辅助函数 (声明为 static) ---
 
 /**
- * @brief 一个简单的哈希函数
+ * @brief SDBM 字符串哈希函数
  */
-static int _hash(int key, int map_size) {
-    return (key & 0x7FFFFFFF) % map_size;
+static unsigned long _hash(const char *str, int map_size) {
+    unsigned long hash = 0;
+    int c;
+    while ((c = *str++))
+        hash = c + (hash << 6) + (hash << 16) - hash;
+    return hash % map_size;
 }
 
 /**
  * @brief (哈希表) 在哈希表中查找节点
  */
-static Node* _hash_find(LRUCache* cache, int key) {
+static Node* _hash_find(LRUCache* cache, const char* key) {
     int index = _hash(key, cache->hash_map_size);
     Node* current = cache->hash_map[index];
+
+    // 遍历冲突链，使用 strcmp 比较
     while (current) {
-        if (current->key == key) {
+        if (strcmp(current->key, key) == 0) { // <--- 更改为 strcmp
             return current;
         }
         current = current->hnext;
@@ -62,6 +68,7 @@ static Node* _hash_find(LRUCache* cache, int key) {
 
 /**
  * @brief (哈希表) 从哈希表中移除一个节点
+ * (注意：此函数不释放 node 或 node->key 的内存)
  */
 static void _hash_remove(LRUCache* cache, Node* node) {
     int index = _hash(node->key, cache->hash_map_size);
@@ -178,7 +185,9 @@ void lru_cache_destroy(LRUCache* cache) {
     while (current != cache->tail) {
         Node* temp = current;
         current = current->next;
-        free(temp);
+        
+        free(temp->key); // <--- 释放键的副本
+        free(temp);      // <--- 释放节点
     }
     
     // 释放哨兵节点
@@ -192,8 +201,8 @@ void lru_cache_destroy(LRUCache* cache) {
     free(cache);
 }
 
-int lru_cache_get(LRUCache* cache, int key) {
-    if (!cache) return -1;
+int lru_cache_get(LRUCache* cache, const char* key) {
+    if (!cache || !key) return -1;
     
     Node* node = _hash_find(cache, key);
     
@@ -207,8 +216,8 @@ int lru_cache_get(LRUCache* cache, int key) {
     return node->value;
 }
 
-void lru_cache_put(LRUCache* cache, int key, int value) {
-    if (!cache) return;
+void lru_cache_put(LRUCache* cache, const char* key, int value) {
+    if (!cache || !key) return;
 
     Node* node = _hash_find(cache, key);
     
@@ -221,7 +230,14 @@ void lru_cache_put(LRUCache* cache, int key, int value) {
         Node* newNode = (Node*)malloc(sizeof(Node));
         if (!newNode) return; // 内存不足
         
-        newNode->key = key;
+        // strdup 是 POSIX 函数，等价于:
+        // newNode->key = malloc(strlen(key) + 1);
+        // strcpy(newNode->key, key);
+        newNode->key = strdup(key); // <--- 关键：创建键的副本
+        if (!newNode->key) { // 检查 strdup 是否失败
+            free(newNode);
+            return;
+        }
         newNode->value = value;
         
         _hash_insert(cache, newNode);
@@ -232,7 +248,10 @@ void lru_cache_put(LRUCache* cache, int key, int value) {
         if (cache->size > cache->capacity) {
             Node* tailNode = _list_remove_tail(cache);
             _hash_remove(cache, tailNode);
-            free(tailNode);
+            
+            free(tailNode->key); // <--- 关键：释放被淘汰的键
+            free(tailNode);      // <--- 关键：释放被淘汰的节点
+            
             cache->size--;
         }
     }
