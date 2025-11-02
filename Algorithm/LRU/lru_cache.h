@@ -10,6 +10,8 @@
 
 // --- 公共类型定义 ---
 
+#define KEY_BUFFER_SIZE 256
+
 /**
  * @brief LRU 缓存的不透明结构体。
  * 用户只能持有此类型的指针，不能直接访问其内部成员。
@@ -41,7 +43,7 @@ void lru_cache_destroy(LRUCache* cache);
  * @param key 要查找的键。
  * @return 如果键存在，返回对应的值；如果键不存在，返回 -1。
  */
-int lru_cache_get(LRUCache* cache, int key);
+int lru_cache_get(LRUCache* cache, const char* key);
 
 /**
  * @brief 向缓存中插入或更新一个键值对。
@@ -52,7 +54,7 @@ int lru_cache_get(LRUCache* cache, int key);
  * @param key 要插入/更新的键。
  * @param value 对应的值。
  */
-void lru_cache_put(LRUCache* cache, int key, int value);
+void lru_cache_put(LRUCache* cache, const char* key, int value);
 
 /**
  * @brief 打印缓存的当前状态（从最近使用到最少使用）。

@@ -7,6 +7,7 @@
 #include "lru_cache.h"
 #include <stdlib.h>
 #include <stdio.h> // NULL 和 printf
+#include <string.h>
 
 // --- 内部数据结构定义 ---
 
@@ -231,7 +232,17 @@ void lru_cache_put(LRUCache* cache, const char* key, int value) {
         // strdup 是 POSIX 函数，等价于:
         // newNode->key = malloc(strlen(key) + 1);
         // strcpy(newNode->key, key);
-        newNode->key = strdup(key); // <--- 关键：创建键的副本
+        // 手动实现 strdup 的功能，以保证 C11 兼容性
+        
+        size_t key_len = strlen(key);
+        newNode->key = (char*)malloc(key_len + 1); // +1 是为了 '\0' 结束符
+
+        if (newNode->key == NULL) { // 检查 malloc 是否失败
+            free(newNode);
+            return; // 内存不足，无法创建节点
+        }
+        strcpy(newNode->key, key);
+
         if (!newNode->key) { // 检查 strdup 是否失败
             free(newNode);
             return;

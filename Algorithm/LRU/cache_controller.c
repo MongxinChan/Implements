@@ -16,46 +16,55 @@ void print_menu(void) {
     printf("请输入您的选择: ");
 }
 
+// 辅助函数：清除输入缓冲区
+static void clear_input_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 void handle_put(LRUCache* cache) {
-    int key, value;
+    char key[KEY_BUFFER_SIZE]; // <--- 用于读取字符串的缓冲区
+    int value;
     
-    printf("  请输入 Key: ");
-    // 检查 scanf 的返回值是一种好的做法
-    if (scanf("%d", &key) != 1) {
+    printf("  请输入 Key (string): ");
+    // 读取字符串, %255s 防止缓冲区溢出
+    if (scanf("%255s", key) != 1) {
         printf("  无效的 Key。\n");
-        // 清空输入缓冲区
-        while (getchar() != '\n'); 
+        clear_input_buffer(); 
         return;
     }
+    clear_input_buffer(); // 清除 scanf 遗留的换行符
     
-    printf("  请输入 Value: ");
+    printf("  请输入 Value (int): ");
     if (scanf("%d", &value) != 1) {
         printf("  无效的 Value。\n");
-        while (getchar() != '\n');
+        clear_input_buffer();
         return;
     }
+    clear_input_buffer(); // 清除 scanf 遗留的换行符
 
     lru_cache_put(cache, key, value);
-    printf("  操作成功：Put(%d, %d)\n", key, value);
+    printf("  操作成功：Put(\"%s\", %d)\n", key, value);
     handle_print(cache); // 操作后立即显示状态
 }
 
 void handle_get(LRUCache* cache) {
-    int key;
-    printf("  请输入 Key: ");
+    char key[KEY_BUFFER_SIZE];
+    printf("  请输入 Key (string): ");
     
-    if (scanf("%d", &key) != 1) {
+    if (scanf("%255s", key) != 1) {
         printf("  无效的 Key。\n");
-        while (getchar() != '\n');
+        clear_input_buffer();
         return;
     }
+    clear_input_buffer();
 
     int value = lru_cache_get(cache, key);
     
     if (value == -1) {
-        printf("  操作结果：Get(%d) -> 未找到 (Not Found)\n\n", key);
+        printf("  操作结果：Get(\"%s\") -> 未找到 (Not Found)\n\n", key);
     } else {
-        printf("  操作结果：Get(%d) -> 找到了 %d\n", key, value);
+        printf("  操作结果：Get(\"%s\") -> 找到了 %d\n", key, value);
         handle_print(cache); // Get 操作会改变顺序，所以打印
     }
 }
