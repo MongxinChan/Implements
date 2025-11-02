@@ -6,7 +6,7 @@
 
 #include "lru_cache.h"
 #include <stdlib.h>
-#include <stdio.h> // 仅用于 NULL
+#include <stdio.h> // NULL 和 printf
 
 // --- 内部数据结构定义 ---
 
@@ -210,9 +210,7 @@ int lru_cache_get(LRUCache* cache, const char* key) {
         return -1; // 未找到
     }
     
-    // 找到了，移到头部
     _list_move_to_head(cache, node);
-    
     return node->value;
 }
 
@@ -255,4 +253,18 @@ void lru_cache_put(LRUCache* cache, const char* key, int value) {
             cache->size--;
         }
     }
+}
+
+
+void lru_cache_print(LRUCache* cache) {
+    if (!cache) return;
+    printf("  LRU Cache (Size: %d / Capacity: %d)\n", cache->size, cache->capacity);
+    printf("  [Head] -> ");
+    Node* current = cache->head->next;
+    while (current != cache->tail) {
+        // <--- 更改打印格式以包含字符串
+        printf("[(\"%s\": %d)] -> ", current->key, current->value); 
+        current = current->next;
+    }
+    printf("[Tail]\n\n");
 }

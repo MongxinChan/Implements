@@ -49,9 +49,17 @@ int lru_cache_get(LRUCache* cache, int key);
  * 如果插入导致缓存超出容量，将淘汰“最近最少使用”的条目。
  *
  * @param cache 缓存实例。
- * @param key 要插入/更新的键 (字符串)。
- * @param value 对应的值 (int)。
+ * @param key 要插入/更新的键。
+ * @param value 对应的值。
  */
-void lru_cache_put(LRUCache* cache, const char* key, int value);
+void lru_cache_put(LRUCache* cache, int key, int value);
+
+/**
+ * @brief 打印缓存的当前状态（从最近使用到最少使用）。
+ * (这是一个新添加的辅助函数)
+ *
+ * @param cache 缓存实例。
+ */
+void lru_cache_print(LRUCache* cache);
 
 #endif // LRU_CACHE_H
