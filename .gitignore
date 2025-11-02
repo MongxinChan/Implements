@@ -1,0 +1,141 @@
+# C / C++
+# 编译产物
+*.o
+*.obj
+*.ko
+*.lib
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.app
+
+# 预编译头文件
+*.pch
+*.gch
+
+# 依赖文件
+*.d
+
+# 构建目录
+build/
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# CMake 临时文件
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+install_manifest.txt
+
+# Visual Studio (常用于 C/C++)
+.vs/
+*.sln.docstates
+*.suo
+*.user
+*.vcxproj.filters
+*.vcxproj.user
+ipch/
+
+# Java
+# 编译后的 .class 文件
+*.class
+
+# 日志文件
+*.log
+
+# 包文件
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# 构建工具产物 (Maven, Gradle)
+target/
+.gradle/
+build/
+bin/
+
+# IDE 配置文件
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+nbproject/
+*.nbattrs
+
+# 其它
+hs_err_pid*
+replay_pid*
+
+
+# Python
+# 字节码和编译文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C 扩展
+*.so
+
+# 虚拟环境
+.venv/
+venv/
+ENV/
+env/
+virtualenv/
+venv.bak/
+env.bak/
+
+# 分发/打包
+.eggs/
+*.egg-info/
+*.egg
+dist/
+build/
+develop-eggs/
+sdist/
+wheels/
+*.manifest
+*.spec
+pip-wheel-metadata/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 单元测试/覆盖率
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+nosetests.xml
+coverage.xml
+
+# 数据库
+*.sqlite3
+*.db
+db.sqlite3
+
+# 环境变量文件
+.env
+.env.*
+!.env.example
+
+# IDE / 编辑器
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
