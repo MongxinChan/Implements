@@ -11,6 +11,11 @@ gcc main.c lru_cache.c cache_controller.c -o lru_demo.a -Wall -Wextra -std=c11
 ```
 
 ```bash
-gcc main.c lru_innodb.c innodb_controller.c -o innodb_demo.a -Wall -Wextra -std=c11
-./innodb_demo.a
+gcc main.c lru_innodb.c innodb_controller.c -o lru_innodb.a -Wall -Wextra -std=c11
+./lru_innodb.a
+```
+
+```bash
+gcc main.c lfu_standard.c lfu_controller.c -o lfu_standard.a -Wall -Wextra -std=c11
+./lfu_standard.a
 ```
